@@ -20,5 +20,7 @@ if __name__ == "__main__":
     chromecast_name = os.getenv('CHROMECAST_NAME', 'Bedroom TV')
     print 'chromecast_name=' + chromecast_name
     print 'PORT=' + PORT
+    print 'Initializing ChromcastSkill'
     chromecast_skill = Skill(chromecast_name)
+    print 'Initializing Chromecast Subscriber'
     Subscriber({'chromecast': chromecast_skill}, PORT)

@@ -16,7 +16,7 @@ Lambda Fucntion via SNS notifications.
 class Subscriber():
 
     def __init__(self, skills, port_overide, topic_arn=os.getenv('AWS_SNS_TOPIC_ARN')):
-
+        print 'Initializing SkillSubscriber with ', skills, port_overide, topic_arn
         if port_overide:
             self.manual_port_forward = True
         else:
@@ -32,8 +32,12 @@ class Subscriber():
         self.skills = skills
 
         class SNSRequestHandler(BaseHTTPRequestHandler):
+            def do_GET(request):
+                print 'received a get request'
+                request.send_response(200)
 
             def do_POST(request):
+                print 'Received a POST request for subscription confirmation maybe?'
                 request.send_response(200)
                 request.send_header('content-type', 'text/html')
                 request.end_headers()
@@ -50,10 +54,14 @@ class Subscriber():
             def log_message(self, format, *args):
                 pass
 
-        self.server = HTTPServer(('', int(port_overide) if port_overide else 0), SNSRequestHandler)
+        using_port = ('', int(port_overide) if port_overide else 0)
+        print 'using port ', using_port
+        self.server = HTTPServer(using_port,  SNSRequestHandler)
 
         port = self.server.server_port
+        print 'Got server port', port
         endpoint_url = 'http://{}:{}'.format(self.get_external_ip(), port)
+        print 'endpoint_url=', endpoint_url
 
         self.subscribe(topic_arn, endpoint_url)
         print('Listening on {}'.format(endpoint_url))
