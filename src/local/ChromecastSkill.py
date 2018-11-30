@@ -43,7 +43,11 @@ class Skill():
         print('Volume command sent to Chromecast. Set to {}.'.format(volume_normalized))
 
     def play_video(self, data, cast, mc):
+        print 'Trying to fetch URL from youtube'
+        youtube_dl_version = subprocess.check_output('youtube-dl --version')
+        print youtube_dl_version
         url = subprocess.check_output("youtube-dl -g --verbose --no-check-certificate -f best -- " + data['videoId'], shell=True)
+        print 'Youtube video fetched successfully'
         mc.play_media(url, 'video/mp4')
         print('video sent to chromecast: {}'.format(url))
 
